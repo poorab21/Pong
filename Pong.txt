@@ -1,0 +1,90 @@
+from tkinter import *
+import random
+window = Tk()
+List = []
+List2 = []
+pong_x = 10
+pong_y = 10
+direction = "right"
+x = (window.winfo_screenwidth() / 2) - 100
+y = (window.winfo_screenheight() / 2) - 100
+directions = ["left","up-left","down-left","right","upright","downright"]
+def Movement_Down(event):
+    global pong_y,pong_x
+    global x, y
+    if pong_y<=550:
+        pong_y += 10
+        c1.delete(List2[len(List2)-1])
+        List2.append(c1.create_rectangle(pong_x,pong_y,pong_x+10,pong_y+70,fill="white"))
+def Movement_Up(event):
+    global pong_x,pong_y
+    if pong_y>=0:
+        pong_y -= 10
+        c1.delete(List2[len(List2) - 1])
+        List2.append(c1.create_rectangle(pong_x, pong_y, pong_x + 10, pong_y + 70, fill="white"))
+def Bounce():
+    global direction,x,y,window
+    if (x+50)==window.winfo_screenwidth():
+        if direction == "right":
+            direction = directions[ random.randint(0,2) ]
+        elif direction == "upright":
+            direction = "up-left"
+        elif direction == "downright":
+            direction = "down-left"
+    elif y==0:
+        if direction == "up-left":
+            direction = "down-left"
+        elif direction == "upright":
+            direction = "downright"
+    elif y==670:
+        if direction == "down-left":
+            direction = "up-left"
+        elif direction == "downright":
+            direction = "upright"
+def Movement():
+    global direction,x,y
+    Bounce()
+    if direction == "right":
+        c1.delete(List[len(List)-1])
+        x += 1
+        List[len(List)-1] = c1.create_oval(x,y,x+50,y+50,fill="yellow")
+    elif direction == "left":
+        c1.delete(List[len(List)-1])
+        x -= 1
+        List[len(List)-1] = c1.create_oval(x,y,x+50,y+50,fill="yellow")
+    elif direction == "up-left":
+        c1.delete(List[len(List) - 1])
+        x -= 1
+        y -= 1
+        List[len(List)-1] = c1.create_oval(x,y,x+50,y+50,fill="yellow")
+    elif direction == "down-left":
+        c1.delete(List[len(List) - 1])
+        x -= 1
+        y += 1
+        List[len(List)-1] = c1.create_oval(x,y,x+50,y+50,fill="yellow")
+    elif direction == "upright":
+        c1.delete(List[len(List)-1])
+        x += 1
+        y -= 1
+        List[len(List)-1] = c1.create_oval(x,y,x+50,y+50,fill="yellow")
+    elif direction == "downright":
+        c1.delete(List[len(List)-1])
+        x += 1
+        y += 1
+        List[len(List)-1] = c1.create_oval(x,y,x+50,y+50,fill="yellow")
+    Collision()
+    window.after(1,Movement)
+def Collision():
+    global pong_x,pong_y,x,y,direction
+    if int(y) >= pong_y and int(y) <= pong_y+70 and int(x)==pong_x:
+        direction = directions[random.randint(3,5)]
+    elif int(x)==0:
+        window.quit()
+c1 = Canvas(window,width=window.winfo_screenwidth(),height=window.winfo_screenheight(),bg="black")
+c1.pack()
+List2.append(c1.create_rectangle(pong_x,pong_y,20,80,fill="white"))
+window.bind("<Down>",Movement_Down)
+window.bind("<Up>",Movement_Up)
+List.append(c1.create_oval(x,y,x+50,y+50,fill="yellow"))
+window.after(2,Movement)
+window.mainloop()
